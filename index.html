@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学習リソースポータル</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .search-section {
+            margin-bottom: 40px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
+        }
+        
+        .search-btn {
+            padding: 15px 30px;
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+        
+        .quick-links-section h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.8rem;
+        }
+        
+        .quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .quick-link {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .quick-link:hover {
+            background: white;
+            border-color: #4facfe;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .quick-link-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .quick-link-text {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .browser-section {
+            margin-top: 40px;
+        }
+        
+        .browser-controls {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .url-display {
+            flex: 1;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #666;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            color: #666;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .control-btn:hover {
+            background: #4facfe;
+            color: white;
+        }
+        
+        .browser-frame {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 0 0 15px 15px;
+            background: white;
+        }
+        
+        .hidden-input {
+            position: fixed;
+            top: -100px;
+            left: -100px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+        }
+        
+        @media (max-width: 768px) {
+            .quick-links-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .browser-frame {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="notification" id="notification"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🎓 学習リソースポータル</h1>
+            <p>研究と学習のための教育リソースにアクセス</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="search-section">
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput" 
+                           placeholder="URLを入力するか、検索キーワードを入力...">
+                    <button class="search-btn" onclick="navigateToSite()">
+                        🔍 アクセス
+                    </button>
+                </div>
+            </div>
+            
+            <div class="quick-links-section">
+                <h2>📚 人気の学習サイト</h2>
+                <div class="quick-links-grid" id="quickLinks">
+                    <!-- クイックリンクはJavaScriptで動的に生成 -->
+                </div>
+            </div>
+            
+            <div class="browser-section">
+                <div class="browser-controls">
+                    <button class="control-btn" onclick="goBack()">←</button>
+                    <button class="control-btn" onclick="goForward()">→</button>
+                    <button class="control-btn" onclick="refreshPage()">↻</button>
+                    <button class="control-btn" onclick="openInNewTab()">↗</button>
+                    <div class="url-display" id="currentUrl">準備完了...</div>
+                    <button class="control-btn" onclick="copyUrl()">📋</button>
+                </div>
+                <iframe class="browser-frame" id="browserFrame" 
+                        sandbox="allow-scripts allow-forms allow-same-origin allow-popups">
+                </iframe>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 隠しiframeで先読み（オプション） -->
+    <div class="hidden-input">
+        <iframe id="preloadFrame" style="display:none;"></iframe>
+    </div>
+
+    <script>
+        // メインのiframe要素
+        const browserFrame = document.getElementById('browserFrame');
+        const searchInput = document.getElementById('searchInput');
+        const currentUrlEl = document.getElementById('currentUrl');
+        const notification = document.getElementById('notification');
+        const quickLinksGrid = document.getElementById('quickLinks');
+        
+        // 閲覧履歴
+        let history = [];
+        let currentHistoryIndex = -1;
+        
+        // クイックリンクの定義 - conf.jsのtabCheckに基づく
+        const quickLinks = [
+            // ソーシャルメディア & エンターテインメント
+            { name: 'YouTube', url: 'https://www.youtube.com', icon: '▶️', category: 'video' },
+            { name: 'Netflix', url: 'https://www.netflix.com', icon: '🎬', category: 'video' },
+            { name: 'Spotify', url: 'https://open.spotify.com', icon: '🎵', category: 'music' },
+            { name: 'SoundCloud', url: 'https://soundcloud.com', icon: '🎧', category: 'music' },
+            { name: 'Twitch', url: 'https://www.twitch.tv', icon: '🎮', category: 'gaming' },
+            { name: 'Disney+', url: 'https://www.disneyplus.com', icon: '🏰', category: 'video' },
+            
+            // ソーシャルネットワーク
+            { name: 'Instagram', url: 'https://www.instagram.com', icon: '📸', category: 'social' },
+            { name: 'Twitter', url: 'https://twitter.com', icon: '🐦', category: 'social' },
+            { name: 'Facebook', url: 'https://www.facebook.com', icon: '👥', category: 'social' },
+            { name: 'Reddit', url: 'https://www.reddit.com', icon: '📱', category: 'social' },
+            { name: 'TikTok', url: 'https://www.tiktok.com', icon: '🎵', category: 'social' },
+            { name: 'Pinterest', url: 'https://www.pinterest.com', icon: '📌', category: 'social' },
+            
+            // ゲーム
+            { name: 'Roblox', url: 'https://www.roblox.com', icon: '🎮', category: 'gaming' },
+            { name: 'Epic Games', url: 'https://www.epicgames.com', icon: '🎯', category: 'gaming' },
+            { name: 'Cool Math Games', url: 'https://www.coolmathgames.com', icon: '🧮', category: 'gaming' },
+            { name: 'Poki', url: 'https://poki.com', icon: '🕹️', category: 'gaming' },
+            { name: 'Krunker', url: 'https://krunker.io', icon: '🔫', category: 'gaming' },
+            
+            // その他
+            { name: 'Google', url: 'https://www.google.com', icon: '🔍', category: 'search' },
+            { name: 'Discord', url: 'https://discord.com', icon: '💬', category: 'communication' },
+            { name: 'Zoom', url: 'https://zoom.us', icon: '📹', category: 'communication' },
+            { name: 'Amazon Video', url: 'https://www.amazon.com/Amazon-Video', icon: '🎥', category: 'video' }
+        ];
+        
+        // クイックリンクを生成
+        function generateQuickLinks() {
+            quickLinksGrid.innerHTML = '';
+            quickLinks.forEach(link => {
+                const linkElement = document.createElement('div');
+                linkElement.className = 'quick-link';
+                linkElement.innerHTML = `
+                    <div class="quick-link-icon">${link.icon}</div>
+                    <div class="quick-link-text">${link.name}</div>
+                `;
+                linkElement.onclick = () => goToQuickLink(link.url, link.name);
+                quickLinksGrid.appendChild(linkElement);
+            });
+        }
+        
+        // クイックリンクをクリックしたとき
+        function goToQuickLink(url, name) {
+            searchInput.value = url;
+            showNotification(`📁 ${name}に移動中...`);
+            loadUrl(url);
+        }
+        
+        // メインのナビゲーション関数
+        function navigateToSite() {
+            const input = searchInput.value.trim();
+            if (!input) {
+                showNotification('⚠️ URLまたは検索語を入力してください', 'warning');
+                return;
+            }
+            
+            let url;
+            if (isValidUrl(input)) {
+                // 完全なURLの場合
+                url = input.startsWith('http') ? input : 'https://' + input;
+            } else {
+                // 検索語の場合
+                url = `https://www.google.com/search?q=${encodeURIComponent(input)}`;
+            }
+            
+            showNotification('🌐 サイトにアクセス中...');
+            loadUrl(url);
+        }
+        
+        // URLの検証
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+        
+        // URLを読み込む
+        function loadUrl(url) {
+            // 履歴を更新
+            history = history.slice(0, currentHistoryIndex + 1);
+            history.push(url);
+            currentHistoryIndex = history.length - 1;
+            
+            // iframeでサイトを読み込み
+            browserFrame.src = url;
+            currentUrlEl.textContent = `アクセス先: ${url}`;
+            
+            // iframeの読み込み完了を監視
+            browserFrame.onload = function() {
+                showNotification('✅ サイトの読み込みが完了しました');
+                currentUrlEl.textContent = `現在: ${url}`;
+                
+                // iframe内の監視スクリプトを無効化する試み
+                try {
+                    const iframeDoc = browserFrame.contentDocument || browserFrame.contentWindow.document;
+                    
+                    // Securly関連のスクリプトを探して無効化
+                    const scripts = iframeDoc.querySelectorAll('script');
+                    scripts.forEach(script => {
+                        const src = script.src || '';
+                        if (src.includes('securly') || 
+                            src.includes('content') || 
+                            src.includes('blocked')) {
+                            script.remove();
+                            console.log('監視スクリプトを削除:', src);
+                        }
+                    });
+                    
+                    // ブロックページを検出した場合の処理
+                    if (iframeDoc.body && iframeDoc.body.innerHTML.includes("isn't allowed")) {
+                        showNotification('🚫 ブロックページを検出、バイパスを試みます...', 'warning');
+                        bypassBlockPage(iframeDoc);
+                    }
+                } catch (error) {
+                    // クロスオリジン制限 - 正常なケース
+                }
+            };
+            
+            // エラー処理
+            browserFrame.onerror = function() {
+                showNotification('❌ サイトの読み込みに失敗しました', 'error');
+            };
+        }
+        
+        // ブロックページのバイパス
+        function bypassBlockPage(iframeDoc) {
+            try {
+                // blocked.htmlのXSS脆弱性を利用
+                const urlParams = new URLSearchParams(iframeDoc.location.search);
+                const siteParam = urlParams.get('site');
+                
+                if (siteParam) {
+                    const actualUrl = atob(siteParam);
+                    showNotification(`🔓 ブロックをバイパス: ${actualUrl}`);
+                    
+                    // 実際のサイトにリダイレクト
+                    setTimeout(() => {
+                        browserFrame.src = actualUrl;
+                    }, 1000);
+                }
+            } catch (error) {
+                console.log('バイパス失敗:', error);
+            }
+        }
+        
+        // ブラウザコントロール関数
+        function goBack() {
+            if (currentHistoryIndex > 0) {
+                currentHistoryIndex--;
+                browserFrame.src = history[currentHistoryIndex];
+                currentUrlEl.textContent = `← 戻る: ${history[currentHistoryIndex]}`;
+                showNotification('↩️ 前のページに戻ります');
+            }
+        }
+        
+        function goForward() {
+            if (currentHistoryIndex < history.length - 1) {
+                currentHistoryIndex++;
+                browserFrame.src = history[currentHistoryIndex];
+                currentUrlEl.textContent = `→ 進む: ${history[currentHistoryIndex]}`;
+                showNotification('↪️ 次のページに進みます');
+            }
+        }
+        
+        function refreshPage() {
+            if (history[currentHistoryIndex]) {
+                browserFrame.src = history[currentHistoryIndex];
+                showNotification('🔄 ページを再読み込み中...');
+            }
+        }
+        
+        function openInNewTab() {
+            if (history[currentHistoryIndex]) {
+                window.open(history[currentHistoryIndex], '_blank');
+                showNotification('↗️ 新しいタブで開きました');
+            }
+        }
+        
+        function copyUrl() {
+            if (history[currentHistoryIndex]) {
+                navigator.clipboard.writeText(history[currentHistoryIndex])
+                    .then(() => showNotification('📋 URLをコピーしました'))
+                    .catch(err => console.error('コピー失敗:', err));
+            }
+        }
+        
+        // 通知表示関数
+        function showNotification(message, type = 'info') {
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            // タイプに応じた色を設定
+            const colors = {
+                'info': '#4facfe',
+                'success': '#4caf50',
+                'warning': '#ff9800',
+                'error': '#f44336'
+            };
+            notification.style.background = colors[type] || colors.info;
+            
+            // 3秒後に非表示
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // キーボードショートカット
+        document.addEventListener('keydown', function(event) {
+            // Ctrl + Enter: ナビゲート
+            if (event.ctrlKey && event.key === 'Enter') {
+                event.preventDefault();
+                navigateToSite();
+            }
+            
+            // Alt + ←: 戻る
+            if (event.altKey && event.key === 'ArrowLeft') {
+                event.preventDefault();
+                goBack();
+            }
+            
+            // Alt + →: 進む
+            if (event.altKey && event.key === 'ArrowRight') {
+                event.preventDefault();
+                goForward();
+            }
+            
+            // F5: 更新
+            if (event.key === 'F5') {
+                event.preventDefault();
+                refreshPage();
+            }
+        });
+        
+        // Enterキーで検索
+        searchInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                navigateToSite();
+            }
+        });
+        
+        // 初期化
+        function initialize() {
+            generateQuickLinks();
+            loadUrl('https://www.google.com');
+            
+            // 定期的な監視防止（オプション）
+            setInterval(() => {
+                try {
+                    // iframe内の監視を防止
+                    if (browserFrame.contentWindow) {
+                        // 監視関数を無効化する試み
+                        const iframeWindow = browserFrame.contentWindow;
+                        if (iframeWindow.blockGoogleGames) {
+                            iframeWindow.blockGoogleGames = function() {};
+                        }
+                    }
+                } catch (e) {
+                    // クロスオリジン制限 - 無視
+                }
+            }, 5000);
+        }
+        
+        // ページ読み込み時に初期化
+        window.onload = initialize;
+    </script>
+</body>
+</html>
