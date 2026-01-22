@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>◈ KNG dark web ◈</title>
+    <title>◈ Portal ◈</title>
     <style>
         :root {
-            --primary: #0a0a0a;
-            --secondary: #111111;
+            --bg-dark: #0a0a0a;
+            --bg-panel: #111111;
             --accent: #00ff41;
             --accent-secondary: #008f11;
-            --text: #c0c0c0;
-            --text-dark: #808080;
-            --glow: 0 0 10px rgba(0, 255, 65, 0.5);
-            --glow-strong: 0 0 20px rgba(0, 255, 65, 0.8);
-            --border: 1px solid #333;
-            --border-glow: 1px solid rgba(0, 255, 65, 0.3);
-            --terminal-font: 'Courier New', 'Consolas', monospace;
+            --text: #e0e0e0;
+            --text-dim: #888888;
+            --border: #333333;
+            --border-glow: rgba(0, 255, 65, 0.3);
+            --terminal: 'Courier New', 'Consolas', 'Monaco', monospace;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            --glow: 0 0 15px rgba(0, 255, 65, 0.3);
         }
         
         * {
@@ -26,394 +26,236 @@
         }
         
         body {
-            background: var(--primary);
+            background: var(--bg-dark);
             color: var(--text);
-            font-family: var(--terminal-font);
+            font-family: var(--terminal);
             min-height: 100vh;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(0, 255, 65, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(0, 143, 17, 0.05) 0%, transparent 50%);
+            line-height: 1.6;
         }
         
-        /* グリッチエフェクト */
-        .glitch {
-            position: relative;
-            animation: glitch 5s infinite;
-        }
-        
-        @keyframes glitch {
-            0%, 100% { transform: translate(0); }
-            97% { transform: translate(0); }
-            98% { transform: translate(-2px, 1px); }
-            99% { transform: translate(2px, -1px); }
-        }
-        
-        .scan-line {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(to right, 
-                transparent 0%, 
-                var(--accent) 50%, 
-                transparent 100%);
-            animation: scan 3s linear infinite;
-            z-index: 9999;
-            pointer-events: none;
-        }
-        
-        @keyframes scan {
-            0% { top: 0%; }
-            100% { top: 100%; }
-        }
-        
-        /* コンテナ */
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
-            position: relative;
         }
         
         /* ヘッダー */
         .header {
             text-align: center;
+            padding: 30px 0;
             margin-bottom: 30px;
-            padding: 20px;
-            border: var(--border-glow);
-            border-radius: 5px;
-            box-shadow: var(--glow);
-            background: rgba(10, 10, 10, 0.9);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            right: -50%;
-            bottom: -50%;
-            background: linear-gradient(45deg, 
-                transparent 30%, 
-                rgba(0, 255, 65, 0.1) 50%, 
-                transparent 70%);
-            animation: shine 10s linear infinite;
-        }
-        
-        @keyframes shine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            border-bottom: 1px solid var(--border);
         }
         
         .title {
-            font-size: 2.8rem;
             color: var(--accent);
-            text-shadow: 0 0 15px var(--accent);
+            font-size: 2.5rem;
+            letter-spacing: 2px;
             margin-bottom: 10px;
-            letter-spacing: 3px;
-            position: relative;
-            z-index: 1;
         }
         
         .subtitle {
-            color: var(--text-dark);
-            font-size: 1rem;
-            letter-spacing: 2px;
-            z-index: 1;
-            position: relative;
+            color: var(--text-dim);
+            font-size: 0.9rem;
         }
         
         /* メインコンテンツ */
-        .main-grid {
+        .main-content {
             display: grid;
-            grid-template-columns: 350px 1fr;
+            grid-template-columns: 300px 1fr;
             gap: 20px;
-            margin-bottom: 20px;
         }
         
         /* サイドバー */
         .sidebar {
-            background: rgba(17, 17, 17, 0.9);
-            border: var(--border-glow);
-            border-radius: 5px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 4px;
             padding: 20px;
-            box-shadow: var(--glow);
         }
         
-        .control-panel {
-            margin-bottom: 30px;
-        }
-        
-        .panel-title {
+        .section-title {
             color: var(--accent);
-            font-size: 1.2rem;
+            font-size: 1rem;
             margin-bottom: 15px;
             padding-bottom: 5px;
-            border-bottom: 1px solid var(--accent-secondary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .panel-title::before {
-            content: '▶';
-            color: var(--accent);
-        }
-        
-        /* トグルボタン */
-        .toggle-group {
-            display: grid;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .toggle-btn {
-            background: transparent;
-            border: var(--border-glow);
-            color: var(--text);
-            padding: 12px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-family: var(--terminal-font);
-            font-size: 0.9rem;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .toggle-btn::before {
-            content: '◼';
-            color: var(--accent);
-            font-size: 0.8rem;
-        }
-        
-        .toggle-btn.active {
-            background: rgba(0, 255, 65, 0.1);
-            color: var(--accent);
-            box-shadow: var(--glow);
-        }
-        
-        .toggle-btn.active::before {
-            content: '▶';
-        }
-        
-        .toggle-btn:hover {
-            background: rgba(0, 255, 65, 0.15);
-            transform: translateX(5px);
+            border-bottom: 1px solid var(--border);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         /* 検索ボックス */
         .search-box {
-            margin-bottom: 20px;
-            position: relative;
+            margin-bottom: 25px;
         }
         
         .search-input {
             width: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            border: var(--border-glow);
-            color: var(--accent);
-            padding: 15px 15px 15px 45px;
-            font-family: var(--terminal-font);
-            font-size: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px 15px;
+            font-family: var(--terminal);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
             border-radius: 3px;
-            outline: none;
-        }
-        
-        .search-input::placeholder {
-            color: var(--text-dark);
         }
         
         .search-input:focus {
-            box-shadow: var(--glow-strong);
-        }
-        
-        .search-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--accent);
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: var(--glow);
         }
         
         .search-btn {
             width: 100%;
-            background: linear-gradient(45deg, var(--secondary), var(--primary));
-            border: var(--border-glow);
+            background: var(--bg-dark);
+            border: 1px solid var(--accent);
             color: var(--accent);
-            padding: 15px;
-            font-family: var(--terminal-font);
-            font-size: 1.1rem;
+            padding: 12px;
+            font-family: var(--terminal);
             cursor: pointer;
             border-radius: 3px;
-            margin-top: 10px;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .search-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(0, 255, 65, 0.2), 
-                transparent);
-            transition: left 0.5s;
-        }
-        
-        .search-btn:hover::before {
-            left: 100%;
+            transition: all 0.2s;
         }
         
         .search-btn:hover {
-            box-shadow: var(--glow);
+            background: rgba(0, 255, 65, 0.1);
         }
         
-        /* クイックアクセスグリッド */
-        .quick-access {
+        /* カテゴリ切り替え */
+        .category-toggles {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+        
+        .category-btn {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 10px;
+            font-family: var(--terminal);
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+        
+        .category-btn.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(0, 255, 65, 0.05);
+        }
+        
+        .category-btn:hover:not(.active) {
+            border-color: var(--text-dim);
+            color: var(--text);
+        }
+        
+        /* サイトグリッド */
+        .sites-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
             gap: 10px;
-            max-height: 400px;
+            max-height: 300px;
             overflow-y: auto;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 3px;
-            border: var(--border);
-        }
-        
-        .quick-access::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .quick-access::-webkit-scrollbar-track {
-            background: var(--secondary);
-        }
-        
-        .quick-access::-webkit-scrollbar-thumb {
-            background: var(--accent-secondary);
+            padding: 5px;
         }
         
         .site-btn {
-            background: rgba(17, 17, 17, 0.8);
-            border: var(--border);
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
             color: var(--text);
             padding: 15px 5px;
             border-radius: 3px;
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.8rem;
-            text-align: center;
+            transition: all 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
+            text-align: center;
+            font-size: 0.8rem;
         }
         
         .site-btn:hover {
-            background: rgba(0, 255, 65, 0.1);
             border-color: var(--accent);
-            transform: scale(1.05);
-            box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         
-        .site-btn .icon {
-            font-size: 1.5rem;
+        .site-icon {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
         }
-        
-        .site-btn.youtube { color: #FF0000; }
-        .site-btn.google { color: #4285F4; }
-        .site-btn.netflix { color: #E50914; }
-        .site-btn.spotify { color: #1DB954; }
-        .site-btn.twitch { color: #9146FF; }
-        .site-btn.reddit { color: #FF4500; }
         
         /* ブラウザセクション */
         .browser-section {
-            background: rgba(17, 17, 17, 0.9);
-            border: var(--border-glow);
-            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 4px;
             overflow: hidden;
-            box-shadow: var(--glow);
         }
         
-        .browser-header {
-            background: var(--secondary);
-            padding: 15px;
+        .browser-toolbar {
+            background: var(--bg-dark);
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 10px;
-            border-bottom: var(--border);
+            gap: 8px;
         }
         
-        .browser-controls {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .ctrl-btn {
-            width: 35px;
-            height: 35px;
-            background: var(--primary);
-            border: var(--border);
+        .toolbar-btn {
+            background: transparent;
+            border: 1px solid var(--border);
             color: var(--text);
+            width: 32px;
+            height: 32px;
             border-radius: 3px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
         
-        .ctrl-btn:hover {
-            background: var(--accent);
-            color: var(--primary);
+        .toolbar-btn:hover {
             border-color: var(--accent);
+            color: var(--accent);
         }
         
         .url-bar {
             flex: 1;
-            background: var(--primary);
-            border: var(--border);
-            color: var(--accent);
-            padding: 10px 15px;
-            font-family: var(--terminal-font);
-            font-size: 0.9rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 12px;
+            font-family: var(--terminal);
+            font-size: 0.85rem;
             border-radius: 3px;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
+            margin: 0 10px;
         }
         
         .browser-frame {
-            width: 100%;
-            height: 700px;
+            flex: 1;
+            min-height: 700px;
             border: none;
             background: black;
         }
         
         /* ステータスバー */
         .status-bar {
+            background: var(--bg-dark);
+            padding: 10px 15px;
+            border-top: 1px solid var(--border);
+            font-size: 0.8rem;
+            color: var(--text-dim);
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background: var(--secondary);
-            border-top: var(--border);
-            font-size: 0.8rem;
-            color: var(--text-dark);
         }
         
         .status-item {
@@ -422,22 +264,11 @@
             gap: 8px;
         }
         
-        .status-led {
+        .status-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: var(--accent-secondary);
-            box-shadow: 0 0 5px var(--accent);
-        }
-        
-        .status-led.active {
             background: var(--accent);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
         }
         
         /* 通知 */
@@ -445,13 +276,12 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: rgba(17, 17, 17, 0.95);
-            border: var(--border-glow);
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
             border-left: 3px solid var(--accent);
             color: var(--text);
-            padding: 15px 20px;
+            padding: 12px 16px;
             border-radius: 3px;
-            box-shadow: var(--glow);
             max-width: 300px;
             transform: translateX(400px);
             transition: transform 0.3s;
@@ -463,123 +293,111 @@
         }
         
         /* レスポンシブ */
-        @media (max-width: 1100px) {
-            .main-grid {
+        @media (max-width: 1024px) {
+            .main-content {
                 grid-template-columns: 1fr;
             }
             
             .browser-frame {
-                height: 500px;
+                min-height: 500px;
             }
         }
         
         @media (max-width: 768px) {
             .container {
-                padding: 10px;
+                padding: 15px;
             }
             
             .title {
                 font-size: 2rem;
             }
             
-            .quick-access {
+            .category-toggles {
+                grid-template-columns: 1fr;
+            }
+            
+            .sites-grid {
                 grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
             }
             
             .browser-frame {
-                height: 400px;
+                min-height: 400px;
+            }
+            
+            .browser-toolbar {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            
+            .url-bar {
+                order: -1;
+                width: 100%;
+                margin: 0 0 10px 0;
             }
         }
     </style>
 </head>
 <body>
-    <!-- スキャンライン -->
-    <div class="scan-line"></div>
-    
     <!-- 通知 -->
     <div class="notification" id="notification"></div>
     
     <div class="container">
         <!-- ヘッダー -->
-        <div class="header glitch">
-            <h1 class="title">◈ dark CYBER ◈</h1>
-            <p class="subtitle">>_ SECURE BROWSING INTERFACE - VERSION 1.2.0</p>
+        <div class="header">
+            <h1 class="title">◈ Portal</h1>
+            <div class="subtitle">Secure access interface</div>
         </div>
         
-        <!-- メイングリッド -->
-        <div class="main-grid">
+        <!-- メインコンテンツ -->
+        <div class="main-content">
             <!-- サイドバー -->
             <div class="sidebar">
-                <!-- コントロールパネル -->
-                <div class="control-panel">
-                    <div class="panel-title">CONTROL PANEL</div>
-                    
-                    <div class="toggle-group">
-                        <button class="toggle-btn active" onclick="toggleCategory('all')">
-                            <span>ALL SITES</span>
-                        </button>
-                        <button class="toggle-btn" onclick="toggleCategory('social')">
-                            <span>SOCIAL MEDIA</span>
-                        </button>
-                        <button class="toggle-btn" onclick="toggleCategory('video')">
-                            <span>VIDEO STREAMING</span>
-                        </button>
-                        <button class="toggle-btn" onclick="toggleCategory('music')">
-                            <span>MUSIC</span>
-                        </button>
-                        <button class="toggle-btn" onclick="toggleCategory('gaming')">
-                            <span>GAMING</span>
-                        </button>
-                        <button class="toggle-btn" onclick="toggleCategory('search')">
-                            <span>SEARCH ENGINES</span>
-                        </button>
-                    </div>
-                </div>
-                
                 <!-- 検索 -->
+                <div class="section-title">Search</div>
                 <div class="search-box">
-                    <div class="search-icon">></div>
                     <input type="text" class="search-input" id="searchInput" 
-                           placeholder="ENTER URL OR SEARCH QUERY..."
-                           onkeypress="handleEnter(event)">
-                    <button class="search-btn" onclick="navigateSite()">
-                        >_ INITIATE CONNECTION
-                    </button>
+                           placeholder="Enter URL or search terms...">
+                    <button class="search-btn" onclick="navigate()">Access</button>
                 </div>
                 
-                <!-- クイックアクセス -->
-                <div class="panel-title">QUICK ACCESS</div>
-                <div class="quick-access" id="quickAccess">
-                    <!-- サイトボタンはJSで動的に生成 -->
+                <!-- カテゴリ切り替え -->
+                <div class="section-title">Categories</div>
+                <div class="category-toggles">
+                    <button class="category-btn active" onclick="setCategory('all')">All</button>
+                    <button class="category-btn" onclick="setCategory('social')">Social</button>
+                    <button class="category-btn" onclick="setCategory('video')">Video</button>
+                    <button class="category-btn" onclick="setCategory('music')">Music</button>
+                    <button class="category-btn" onclick="setCategory('games')">Games</button>
+                    <button class="category-btn" onclick="setCategory('other')">Other</button>
+                </div>
+                
+                <!-- サイト一覧 -->
+                <div class="section-title">Quick Access</div>
+                <div class="sites-grid" id="sitesGrid">
+                    <!-- サイトボタンはJSで生成 -->
                 </div>
             </div>
             
             <!-- ブラウザ -->
             <div class="browser-section">
-                <div class="browser-header">
-                    <div class="browser-controls">
-                        <button class="ctrl-btn" onclick="goBack()" title="Back">←</button>
-                        <button class="ctrl-btn" onclick="goForward()" title="Forward">→</button>
-                        <button class="ctrl-btn" onclick="refreshPage()" title="Refresh">↻</button>
-                        <button class="ctrl-btn" onclick="openNewTab()" title="New Tab">+</button>
-                        <button class="ctrl-btn" onclick="copyUrl()" title="Copy URL">📋</button>
-                    </div>
-                    <div class="url-bar" id="urlDisplay">>_ READY FOR CONNECTION...</div>
+                <div class="browser-toolbar">
+                    <button class="toolbar-btn" onclick="goBack()" title="Back">←</button>
+                    <button class="toolbar-btn" onclick="goForward()" title="Forward">→</button>
+                    <button class="toolbar-btn" onclick="refresh()" title="Refresh">↻</button>
+                    <div class="url-bar" id="urlDisplay">Ready...</div>
+                    <button class="toolbar-btn" onclick="openNew()" title="New Tab">+</button>
+                    <button class="toolbar-btn" onclick="copyUrl()" title="Copy URL">📋</button>
                 </div>
                 <iframe class="browser-frame" id="browserFrame" 
                         sandbox="allow-scripts allow-forms allow-same-origin allow-popups">
                 </iframe>
-                
                 <div class="status-bar">
                     <div class="status-item">
-                        <div class="status-led active" id="statusLed"></div>
-                        <span id="statusText">CONNECTED</span>
+                        <div class="status-dot"></div>
+                        <span id="statusText">Connected</span>
                     </div>
                     <div class="status-item">
-                        <span id="siteCount">0</span> SITES AVAILABLE
-                    </div>
-                    <div class="status-item">
-                        SECURITY: <span id="securityLevel" style="color: var(--accent)">ACTIVE</span>
+                        <span id="siteCount">0</span> sites available
                     </div>
                 </div>
             </div>
@@ -587,81 +405,52 @@
     </div>
 
     <script>
-        // メイン要素
+        // 要素
         const browserFrame = document.getElementById('browserFrame');
         const searchInput = document.getElementById('searchInput');
         const urlDisplay = document.getElementById('urlDisplay');
         const notification = document.getElementById('notification');
-        const quickAccess = document.getElementById('quickAccess');
-        const statusLed = document.getElementById('statusLed');
+        const sitesGrid = document.getElementById('sitesGrid');
         const statusText = document.getElementById('statusText');
         const siteCount = document.getElementById('siteCount');
         
-        // 状態管理
+        // 状態
         let history = [];
         let currentIndex = -1;
         let activeCategory = 'all';
-        let siteStats = { total: 0, active: 0 };
         
-        // サイトデータベース
+        // サイトデータ
         const sites = [
-            // 動画ストリーミング
-            { id: 'youtube', name: 'YouTube', url: 'https://www.youtube.com', icon: '▶️', category: 'video' },
-            { id: 'netflix', name: 'Netflix', url: 'https://www.netflix.com', icon: '🎬', category: 'video' },
-            { id: 'twitch', name: 'Twitch', url: 'https://www.twitch.tv', icon: '🔴', category: 'video' },
-            { id: 'dailymotion', name: 'Dailymotion', url: 'https://www.dailymotion.com', icon: '📺', category: 'video' },
-            { id: 'hulu', name: 'Hulu', url: 'https://www.hulu.com', icon: '🟢', category: 'video' },
-            { id: 'disney', name: 'Disney+', url: 'https://www.disneyplus.com', icon: '🏰', category: 'video' },
-            
-            // 音楽
-            { id: 'spotify', name: 'Spotify', url: 'https://open.spotify.com', icon: '🎵', category: 'music' },
-            { id: 'soundcloud', name: 'SoundCloud', url: 'https://soundcloud.com', icon: '☁️', category: 'music' },
-            { id: 'pandora', name: 'Pandora', url: 'https://www.pandora.com', icon: '🎶', category: 'music' },
-            
-            // ソーシャルメディア
-            { id: 'twitter', name: 'Twitter', url: 'https://twitter.com', icon: '🐦', category: 'social' },
-            { id: 'reddit', name: 'Reddit', url: 'https://www.reddit.com', icon: '📱', category: 'social' },
-            { id: 'instagram', name: 'Instagram', url: 'https://www.instagram.com', icon: '📸', category: 'social' },
-            { id: 'facebook', name: 'Facebook', url: 'https://www.facebook.com', icon: '👥', category: 'social' },
-            { id: 'tiktok', name: 'TikTok', url: 'https://www.tiktok.com', icon: '🎵', category: 'social' },
-            { id: 'pinterest', name: 'Pinterest', url: 'https://www.pinterest.com', icon: '📌', category: 'social' },
-            { id: 'tumblr', name: 'Tumblr', url: 'https://www.tumblr.com', icon: '💬', category: 'social' },
-            
-            // ゲーム
-            { id: 'roblox', name: 'Roblox', url: 'https://www.roblox.com', icon: '🎮', category: 'gaming' },
-            { id: 'epicgames', name: 'Epic Games', url: 'https://www.epicgames.com', icon: '🎯', category: 'gaming' },
-            { id: 'steam', name: 'Steam', url: 'https://store.steampowered.com', icon: '⚙️', category: 'gaming' },
-            { id: 'coolmath', name: 'Cool Math', url: 'https://www.coolmathgames.com', icon: '🧮', category: 'gaming' },
-            { id: 'krunker', name: 'Krunker', url: 'https://krunker.io', icon: '🔫', category: 'gaming' },
-            { id: 'poki', name: 'Poki', url: 'https://poki.com', icon: '🕹️', category: 'gaming' },
-            
-            // 検索エンジン
-            { id: 'google', name: 'Google', url: 'https://www.google.com', icon: '🔍', category: 'search' },
-            { id: 'bing', name: 'Bing', url: 'https://www.bing.com', icon: '🔎', category: 'search' },
-            { id: 'duckduckgo', name: 'DuckDuckGo', url: 'https://duckduckgo.com', icon: '🦆', category: 'search' },
-            
-            // その他
-            { id: 'discord', name: 'Discord', url: 'https://discord.com', icon: '💬', category: 'social' },
-            { id: 'amazon', name: 'Amazon Video', url: 'https://www.amazon.com/Amazon-Video', icon: '🎥', category: 'video' },
-            { id: 'github', name: 'GitHub', url: 'https://github.com', icon: '🐙', category: 'other' },
-            { id: 'wikipedia', name: 'Wikipedia', url: 'https://wikipedia.org', icon: '📚', category: 'other' }
+            { name: 'YouTube', url: 'https://www.youtube.com', icon: '▶️', category: 'video' },
+            { name: 'Netflix', url: 'https://www.netflix.com', icon: '🎬', category: 'video' },
+            { name: 'Spotify', url: 'https://open.spotify.com', icon: '🎵', category: 'music' },
+            { name: 'Twitch', url: 'https://www.twitch.tv', icon: '🔴', category: 'video' },
+            { name: 'Discord', url: 'https://discord.com', icon: '💬', category: 'social' },
+            { name: 'Reddit', url: 'https://www.reddit.com', icon: '📱', category: 'social' },
+            { name: 'Twitter', url: 'https://twitter.com', icon: '🐦', category: 'social' },
+            { name: 'Instagram', url: 'https://www.instagram.com', icon: '📸', category: 'social' },
+            { name: 'TikTok', url: 'https://www.tiktok.com', icon: '🎵', category: 'social' },
+            { name: 'Facebook', url: 'https://www.facebook.com', icon: '👥', category: 'social' },
+            { name: 'Google', url: 'https://www.google.com', icon: '🔍', category: 'other' },
+            { name: 'Roblox', url: 'https://www.roblox.com', icon: '🎮', category: 'games' },
+            { name: 'Coolmath', url: 'https://www.coolmathgames.com', icon: '🧮', category: 'games' },
+            { name: 'SoundCloud', url: 'https://soundcloud.com', icon: '☁️', category: 'music' },
+            { name: 'Amazon Video', url: 'https://www.amazon.com/Amazon-Video', icon: '🎥', category: 'video' },
+            { name: 'Disney+', url: 'https://www.disneyplus.com', icon: '🏰', category: 'video' },
+            { name: 'GitHub', url: 'https://github.com', icon: '🐙', category: 'other' },
+            { name: 'Wikipedia', url: 'https://wikipedia.org', icon: '📚', category: 'other' }
         ];
         
         // 初期化
-        function initialize() {
-            generateQuickAccess();
-            updateStats();
+        function init() {
+            updateSiteGrid();
             loadUrl('https://www.google.com');
-            setupEventListeners();
-            startStatusAnimation();
-            
-            // 初期通知
-            showNotification('>_ SYSTEM INITIALIZED', 'success');
+            setupEvents();
         }
         
-        // クイックアクセス生成
-        function generateQuickAccess() {
-            quickAccess.innerHTML = '';
+        // サイトグリッド更新
+        function updateSiteGrid() {
+            sitesGrid.innerHTML = '';
             
             const filteredSites = activeCategory === 'all' 
                 ? sites 
@@ -669,138 +458,82 @@
             
             filteredSites.forEach(site => {
                 const btn = document.createElement('button');
-                btn.className = `site-btn ${site.id} ${site.category}`;
+                btn.className = 'site-btn';
                 btn.innerHTML = `
-                    <div class="icon">${site.icon}</div>
+                    <div class="site-icon">${site.icon}</div>
                     <div>${site.name}</div>
                 `;
-                btn.title = site.url;
                 btn.onclick = () => {
                     searchInput.value = site.url;
-                    navigateToSite(site.url, site.name);
+                    navigateTo(site.url);
                 };
-                quickAccess.appendChild(btn);
+                sitesGrid.appendChild(btn);
             });
             
             siteCount.textContent = filteredSites.length;
         }
         
-        // カテゴリ切り替え
-        function toggleCategory(category) {
-            // トグルボタンの状態更新
-            document.querySelectorAll('.toggle-btn').forEach(btn => {
+        // カテゴリ設定
+        function setCategory(category) {
+            activeCategory = category;
+            document.querySelectorAll('.category-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
-            
-            // カテゴリ変更
-            activeCategory = category;
-            generateQuickAccess();
-            
-            showNotification(`>_ CATEGORY: ${category.toUpperCase()}`, 'info');
+            updateSiteGrid();
         }
         
-        // サイトにナビゲート
-        function navigateSite() {
+        // ナビゲーション
+        function navigate() {
             const input = searchInput.value.trim();
-            if (!input) {
-                showNotification('>_ ERROR: NO INPUT DETECTED', 'error');
-                return;
+            if (!input) return;
+            
+            let url;
+            if (input.includes('.') && !input.includes(' ')) {
+                url = input.startsWith('http') ? input : 'https://' + input;
+            } else {
+                url = `https://www.google.com/search?q=${encodeURIComponent(input)}`;
             }
             
-            navigateToSite(processInput(input), 'Custom Destination');
+            navigateTo(url);
         }
         
-        function navigateToSite(url, name = '') {
+        function navigateTo(url) {
             // 履歴更新
             history = history.slice(0, currentIndex + 1);
             history.push(url);
             currentIndex = history.length - 1;
             
-            // ステータス更新
-            updateStatus('CONNECTING...', 'warning');
-            
-            // iframeで読み込み
+            // 読み込み
             browserFrame.src = url;
-            urlDisplay.textContent = `>_ CONNECTING TO: ${url.substring(0, 50)}...`;
+            urlDisplay.textContent = `Loading: ${url.substring(0, 40)}...`;
+            statusText.textContent = 'Connecting...';
             
-            // 読み込み完了時の処理
-            browserFrame.onload = function() {
-                updateStatus('CONNECTED', 'success');
-                urlDisplay.textContent = `>_ CONNECTED: ${url.substring(0, 60)}`;
+            // 読み込み完了
+            browserFrame.onload = () => {
+                urlDisplay.textContent = url;
+                statusText.textContent = 'Connected';
                 
-                if (name) {
-                    showNotification(`>_ ACCESS GRANTED: ${name}`, 'success');
-                }
-                
-                // 監視スクリプトの無効化試行
+                // 監視スクリプト無効化
                 try {
-                    const iframeDoc = browserFrame.contentDocument || browserFrame.contentWindow.document;
-                    disableMonitoringScripts(iframeDoc);
-                } catch (e) {
+                    const iframeDoc = browserFrame.contentDocument;
+                    const scripts = iframeDoc.querySelectorAll('script');
+                    scripts.forEach(script => {
+                        if (script.src && (
+                            script.src.includes('securly') || 
+                            script.src.includes('content') || 
+                            script.src.includes('blocked'))) {
+                            script.remove();
+                        }
+                    });
+                } catch(e) {
                     // クロスオリジン制限
                 }
             };
             
-            // エラー処理
-            browserFrame.onerror = function() {
-                updateStatus('CONNECTION FAILED', 'error');
-                showNotification('>_ CONNECTION FAILED', 'error');
+            browserFrame.onerror = () => {
+                statusText.textContent = 'Connection failed';
             };
-        }
-        
-        // 入力処理
-        function processInput(input) {
-            // URLの検証
-            if (input.includes('.') && !input.includes(' ')) {
-                return input.startsWith('http') ? input : 'https://' + input;
-            }
-            
-            // 検索語の場合
-            return `https://www.google.com/search?q=${encodeURIComponent(input)}`;
-        }
-        
-        // 監視スクリプト無効化
-        function disableMonitoringScripts(doc) {
-            // Securlyスクリプトを探す
-            const scripts = doc.querySelectorAll('script');
-            let blockedCount = 0;
-            
-            scripts.forEach(script => {
-                const src = script.src || '';
-                if (src.includes('securly') || src.includes('content') || src.includes('blocked')) {
-                    script.remove();
-                    blockedCount++;
-                }
-            });
-            
-            if (blockedCount > 0) {
-                showNotification(`>_ ${blockedCount} MONITORING SCRIPTS NEUTRALIZED`, 'warning');
-            }
-            
-            // ブロックページ検出
-            if (doc.body && doc.body.innerHTML.includes("isn't allowed")) {
-                bypassBlockPage(doc);
-            }
-        }
-        
-        // ブロックページバイパス
-        function bypassBlockPage(doc) {
-            try {
-                const params = new URLSearchParams(doc.location.search);
-                const siteParam = params.get('site');
-                
-                if (siteParam) {
-                    const actualUrl = atob(siteParam);
-                    showNotification(`>_ BLOCK BYPASS: REDIRECTING...`, 'warning');
-                    
-                    setTimeout(() => {
-                        browserFrame.src = actualUrl;
-                    }, 1000);
-                }
-            } catch (error) {
-                // バイパス失敗
-            }
         }
         
         // ブラウザコントロール
@@ -808,8 +541,6 @@
             if (currentIndex > 0) {
                 currentIndex--;
                 browserFrame.src = history[currentIndex];
-                urlDisplay.textContent = `>_ NAVIGATING BACK...`;
-                showNotification('>_ NAVIGATION: BACK', 'info');
             }
         }
         
@@ -817,118 +548,40 @@
             if (currentIndex < history.length - 1) {
                 currentIndex++;
                 browserFrame.src = history[currentIndex];
-                urlDisplay.textContent = `>_ NAVIGATING FORWARD...`;
-                showNotification('>_ NAVIGATION: FORWARD', 'info');
             }
         }
         
-        function refreshPage() {
-            if (history[currentIndex]) {
-                browserFrame.src = history[currentIndex];
-                showNotification('>_ PAGE REFRESHED', 'info');
-            }
+        function refresh() {
+            browserFrame.src = browserFrame.src;
         }
         
-        function openNewTab() {
-            if (history[currentIndex]) {
-                window.open(history[currentIndex], '_blank');
-                showNotification('>_ OPENED IN NEW TAB', 'info');
-            }
+        function openNew() {
+            window.open(browserFrame.src, '_blank');
         }
         
         function copyUrl() {
-            if (history[currentIndex]) {
-                navigator.clipboard.writeText(history[currentIndex])
-                    .then(() => showNotification('>_ URL COPIED TO CLIPBOARD', 'success'))
-                    .catch(err => showNotification('>_ COPY FAILED', 'error'));
-            }
+            navigator.clipboard.writeText(browserFrame.src);
+            showNotification('URL copied');
         }
         
-        // ステータス管理
-        function updateStatus(text, type) {
-            statusText.textContent = text;
-            statusLed.className = 'status-led active';
-            
-            const colors = {
-                'success': '#00ff41',
-                'warning': '#ffaa00',
-                'error': '#ff0041',
-                'info': '#00aaff'
-            };
-            
-            statusLed.style.background = colors[type] || colors.info;
-            statusLed.style.boxShadow = `0 0 10px ${colors[type] || colors.info}`;
-        }
-        
-        function updateStats() {
-            siteStats.total = sites.length;
-            siteStats.active = sites.length; // すべて利用可能と仮定
-        }
-        
-        // 通知表示
-        function showNotification(message, type = 'info') {
+        // 通知
+        function showNotification(message) {
             notification.textContent = message;
-            notification.className = 'notification show';
-            
-            const colors = {
-                'info': '#00aaff',
-                'success': '#00ff41',
-                'warning': '#ffaa00',
-                'error': '#ff0041'
-            };
-            
-            notification.style.borderLeftColor = colors[type] || colors.info;
-            
+            notification.classList.add('show');
             setTimeout(() => {
                 notification.classList.remove('show');
-            }, 3000);
+            }, 2000);
         }
         
-        // ステータスアニメーション
-        function startStatusAnimation() {
-            let count = 0;
-            setInterval(() => {
-                const symbols = ['◈', '◆', '◇', '◎', '●'];
-                document.querySelector('.title').textContent = 
-                    `${symbols[count % symbols.length]} CYBER PORTAL ${symbols[count % symbols.length]}`;
-                count++;
-            }, 1000);
-        }
-        
-        // イベントリスナー設定
-        function setupEventListeners() {
-            // Enterキーで検索
-            searchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') navigateSite();
-            });
-            
-            // Ctrl+Shift+Sでサイト表示切り替え
-            document.addEventListener('keydown', function(e) {
-                if (e.ctrlKey && e.shiftKey && e.key === 'S') {
-                    e.preventDefault();
-                    const current = document.querySelector('.toggle-btn.active');
-                    const category = current.textContent.trim().toLowerCase();
-                    toggleCategory(category === 'all sites' ? 'social' : 
-                                 category === 'social media' ? 'video' :
-                                 category === 'video streaming' ? 'music' :
-                                 category === 'music' ? 'gaming' :
-                                 category === 'gaming' ? 'search' : 'all');
-                }
-                
-                // ショートカットキー
-                if (e.ctrlKey && e.key === 'ArrowLeft') goBack();
-                if (e.ctrlKey && e.key === 'ArrowRight') goForward();
-                if (e.ctrlKey && e.key === 'r') refreshPage();
+        // イベント設定
+        function setupEvents() {
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') navigate();
             });
         }
         
-        // Enterキーハンドラ
-        function handleEnter(event) {
-            if (event.key === 'Enter') navigateSite();
-        }
-        
-        // ページ読み込み時初期化
-        window.onload = initialize;
+        // ページ読み込み
+        window.onload = init;
     </script>
 </body>
 </html>
