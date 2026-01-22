@@ -3,20 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>◈ Portal ◈</title>
+    <title>◈ Portal</title>
     <style>
         :root {
-            --bg-dark: #0a0a0a;
-            --bg-panel: #111111;
-            --accent: #00ff41;
-            --accent-secondary: #008f11;
-            --text: #e0e0e0;
-            --text-dim: #888888;
-            --border: #333333;
-            --border-glow: rgba(0, 255, 65, 0.3);
-            --terminal: 'Courier New', 'Consolas', 'Monaco', monospace;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            --glow: 0 0 15px rgba(0, 255, 65, 0.3);
+            --bg: #0a0a0a;
+            --panel: #111;
+            --text: #ccc;
+            --accent: #0f0;
+            --border: #333;
         }
         
         * {
@@ -26,15 +20,41 @@
         }
         
         body {
-            background: var(--bg-dark);
+            background: var(--bg);
             color: var(--text);
-            font-family: var(--terminal);
+            font-family: monospace;
             min-height: 100vh;
-            line-height: 1.6;
+            overflow: hidden;
+            cursor: default;
         }
         
+        body.game-mode {
+            cursor: none !important;
+        }
+        
+        body.game-mode * {
+            cursor: none !important;
+        }
+        
+        /* ゲームモードカーソル */
+        .game-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+        
+        body.game-mode .game-cursor {
+            display: block;
+        }
+        
+        /* メインコンテナ */
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -42,421 +62,304 @@
         /* ヘッダー */
         .header {
             text-align: center;
-            padding: 30px 0;
             margin-bottom: 30px;
+            padding-bottom: 15px;
             border-bottom: 1px solid var(--border);
         }
         
-        .title {
+        h1 {
             color: var(--accent);
-            font-size: 2.5rem;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
+            font-size: 24px;
+            margin-bottom: 5px;
         }
         
-        .subtitle {
-            color: var(--text-dim);
-            font-size: 0.9rem;
+        /* ツールバー */
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 3px;
         }
         
-        /* メインコンテンツ */
-        .main-content {
+        .toolbar input {
+            flex: 1;
+            background: black;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px;
+            font-family: monospace;
+        }
+        
+        .toolbar button {
+            background: black;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 8px 15px;
+            font-family: monospace;
+            cursor: pointer;
+        }
+        
+        .toolbar button:hover {
+            background: var(--accent);
+            color: black;
+        }
+        
+        /* メインエリア */
+        .main-area {
             display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 20px;
+            grid-template-columns: 150px 1fr;
+            gap: 15px;
+            height: 75vh;
         }
         
         /* サイドバー */
         .sidebar {
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 20px;
-        }
-        
-        .section-title {
-            color: var(--accent);
-            font-size: 1rem;
-            margin-bottom: 15px;
-            padding-bottom: 5px;
-            border-bottom: 1px solid var(--border);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        /* 検索ボックス */
-        .search-box {
-            margin-bottom: 25px;
-        }
-        
-        .search-input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 12px 15px;
-            font-family: var(--terminal);
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            border-radius: 3px;
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: var(--glow);
-        }
-        
-        .search-btn {
-            width: 100%;
-            background: var(--bg-dark);
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 12px;
-            font-family: var(--terminal);
-            cursor: pointer;
-            border-radius: 3px;
-            transition: all 0.2s;
-        }
-        
-        .search-btn:hover {
-            background: rgba(0, 255, 65, 0.1);
-        }
-        
-        /* カテゴリ切り替え */
-        .category-toggles {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         
         .category-btn {
-            background: var(--bg-dark);
+            background: var(--panel);
             border: 1px solid var(--border);
-            color: var(--text-dim);
-            padding: 10px;
-            font-family: var(--terminal);
-            font-size: 0.8rem;
+            color: var(--text);
+            padding: 12px;
+            font-family: monospace;
             cursor: pointer;
-            border-radius: 3px;
+            text-align: left;
             transition: all 0.2s;
         }
         
+        .category-btn:hover,
         .category-btn.active {
             border-color: var(--accent);
             color: var(--accent);
-            background: rgba(0, 255, 65, 0.05);
         }
         
-        .category-btn:hover:not(.active) {
-            border-color: var(--text-dim);
-            color: var(--text);
+        .game-toggle {
+            margin-top: auto;
+            background: #222;
+            border: 1px solid #f00;
+            color: #f00;
+            padding: 12px;
+            font-family: monospace;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .game-toggle.active {
+            background: #f00;
+            color: white;
         }
         
         /* サイトグリッド */
         .sites-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 10px;
-            max-height: 300px;
+            max-height: 200px;
             overflow-y: auto;
-            padding: 5px;
+            padding: 10px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 3px;
         }
         
         .site-btn {
-            background: var(--bg-dark);
+            background: black;
             border: 1px solid var(--border);
             color: var(--text);
             padding: 15px 5px;
-            border-radius: 3px;
+            font-family: monospace;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 12px;
         }
         
         .site-btn:hover {
             border-color: var(--accent);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
         }
         
         .site-icon {
-            font-size: 1.2rem;
+            font-size: 20px;
             margin-bottom: 5px;
         }
         
-        /* ブラウザセクション */
-        .browser-section {
+        /* ブラウザエリア */
+        .browser-area {
             display: flex;
             flex-direction: column;
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            overflow: hidden;
         }
         
-        .browser-toolbar {
-            background: var(--bg-dark);
-            padding: 12px 15px;
-            border-bottom: 1px solid var(--border);
+        .browser-controls {
             display: flex;
-            align-items: center;
-            gap: 8px;
+            gap: 5px;
+            margin-bottom: 10px;
         }
         
-        .toolbar-btn {
-            background: transparent;
+        .control-btn {
+            background: var(--panel);
             border: 1px solid var(--border);
             color: var(--text);
-            width: 32px;
-            height: 32px;
-            border-radius: 3px;
+            width: 30px;
+            height: 30px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
         }
         
-        .toolbar-btn:hover {
+        .control-btn:hover {
             border-color: var(--accent);
             color: var(--accent);
         }
         
-        .url-bar {
-            flex: 1;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 8px 12px;
-            font-family: var(--terminal);
-            font-size: 0.85rem;
-            border-radius: 3px;
-            margin: 0 10px;
-        }
-        
         .browser-frame {
             flex: 1;
-            min-height: 700px;
             border: none;
             background: black;
         }
         
-        /* ステータスバー */
-        .status-bar {
-            background: var(--bg-dark);
-            padding: 10px 15px;
-            border-top: 1px solid var(--border);
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--accent);
-        }
-        
-        /* 通知 */
-        .notification {
+        /* シンプル通知 */
+        .notify {
             position: fixed;
-            bottom: 20px;
+            top: 20px;
             right: 20px;
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            border-left: 3px solid var(--accent);
-            color: var(--text);
-            padding: 12px 16px;
-            border-radius: 3px;
-            max-width: 300px;
-            transform: translateX(400px);
-            transition: transform 0.3s;
-            z-index: 1000;
-        }
-        
-        .notification.show {
-            transform: translateX(0);
-        }
-        
-        /* レスポンシブ */
-        @media (max-width: 1024px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .browser-frame {
-                min-height: 500px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            .title {
-                font-size: 2rem;
-            }
-            
-            .category-toggles {
-                grid-template-columns: 1fr;
-            }
-            
-            .sites-grid {
-                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-            }
-            
-            .browser-frame {
-                min-height: 400px;
-            }
-            
-            .browser-toolbar {
-                flex-wrap: wrap;
-                gap: 5px;
-            }
-            
-            .url-bar {
-                order: -1;
-                width: 100%;
-                margin: 0 0 10px 0;
-            }
+            background: var(--panel);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 10px 15px;
+            font-family: monospace;
+            display: none;
         }
     </style>
 </head>
 <body>
+    <!-- ゲームモードカーソル -->
+    <div class="game-cursor" id="gameCursor"></div>
+    
     <!-- 通知 -->
-    <div class="notification" id="notification"></div>
+    <div class="notify" id="notify"></div>
     
     <div class="container">
         <!-- ヘッダー -->
         <div class="header">
-            <h1 class="title">◈ Portal</h1>
-            <div class="subtitle">Secure access interface</div>
+            <h1>◈ PORTAL</h1>
+            <div style="color: #666; font-size: 12px;">Secure access point</div>
         </div>
         
-        <!-- メインコンテンツ -->
-        <div class="main-content">
+        <!-- ツールバー -->
+        <div class="toolbar">
+            <input type="text" id="urlInput" placeholder="Enter URL or search...">
+            <button onclick="go()">GO</button>
+        </div>
+        
+        <!-- メインエリア -->
+        <div class="main-area">
             <!-- サイドバー -->
             <div class="sidebar">
-                <!-- 検索 -->
-                <div class="section-title">Search</div>
-                <div class="search-box">
-                    <input type="text" class="search-input" id="searchInput" 
-                           placeholder="Enter URL or search terms...">
-                    <button class="search-btn" onclick="navigate()">Access</button>
-                </div>
+                <button class="category-btn active" onclick="setCategory('all')">ALL</button>
+                <button class="category-btn" onclick="setCategory('games')">GAMES</button>
+                <button class="category-btn" onclick="setCategory('video')">VIDEO</button>
+                <button class="category-btn" onclick="setCategory('social')">SOCIAL</button>
                 
-                <!-- カテゴリ切り替え -->
-                <div class="section-title">Categories</div>
-                <div class="category-toggles">
-                    <button class="category-btn active" onclick="setCategory('all')">All</button>
-                    <button class="category-btn" onclick="setCategory('social')">Social</button>
-                    <button class="category-btn" onclick="setCategory('video')">Video</button>
-                    <button class="category-btn" onclick="setCategory('music')">Music</button>
-                    <button class="category-btn" onclick="setCategory('games')">Games</button>
-                    <button class="category-btn" onclick="setCategory('other')">Other</button>
-                </div>
-                
-                <!-- サイト一覧 -->
-                <div class="section-title">Quick Access</div>
                 <div class="sites-grid" id="sitesGrid">
-                    <!-- サイトボタンはJSで生成 -->
+                    <!-- サイトはJSで生成 -->
                 </div>
+                
+                <button class="game-toggle" id="gameToggle" onclick="toggleGameMode()">
+                    GAME MODE: OFF
+                </button>
             </div>
             
-            <!-- ブラウザ -->
-            <div class="browser-section">
-                <div class="browser-toolbar">
-                    <button class="toolbar-btn" onclick="goBack()" title="Back">←</button>
-                    <button class="toolbar-btn" onclick="goForward()" title="Forward">→</button>
-                    <button class="toolbar-btn" onclick="refresh()" title="Refresh">↻</button>
-                    <div class="url-bar" id="urlDisplay">Ready...</div>
-                    <button class="toolbar-btn" onclick="openNew()" title="New Tab">+</button>
-                    <button class="toolbar-btn" onclick="copyUrl()" title="Copy URL">📋</button>
+            <!-- ブラウザエリア -->
+            <div class="browser-area">
+                <div class="browser-controls">
+                    <button class="control-btn" onclick="back()">←</button>
+                    <button class="control-btn" onclick="forward()">→</button>
+                    <button class="control-btn" onclick="refresh()">↻</button>
                 </div>
-                <iframe class="browser-frame" id="browserFrame" 
+                <iframe class="browser-frame" id="browser" 
                         sandbox="allow-scripts allow-forms allow-same-origin allow-popups">
                 </iframe>
-                <div class="status-bar">
-                    <div class="status-item">
-                        <div class="status-dot"></div>
-                        <span id="statusText">Connected</span>
-                    </div>
-                    <div class="status-item">
-                        <span id="siteCount">0</span> sites available
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 
     <script>
         // 要素
-        const browserFrame = document.getElementById('browserFrame');
-        const searchInput = document.getElementById('searchInput');
-        const urlDisplay = document.getElementById('urlDisplay');
-        const notification = document.getElementById('notification');
+        const browser = document.getElementById('browser');
+        const urlInput = document.getElementById('urlInput');
         const sitesGrid = document.getElementById('sitesGrid');
-        const statusText = document.getElementById('statusText');
-        const siteCount = document.getElementById('siteCount');
+        const gameToggle = document.getElementById('gameToggle');
+        const gameCursor = document.getElementById('gameCursor');
+        const notify = document.getElementById('notify');
         
         // 状態
         let history = [];
         let currentIndex = -1;
-        let activeCategory = 'all';
+        let category = 'all';
+        let gameMode = false;
         
         // サイトデータ
         const sites = [
+            // ゲーム
+            { name: 'Krunker', url: 'https://krunker.io', icon: '🎯', category: 'games' },
+            { name: 'Roblox', url: 'https://www.roblox.com', icon: '🎮', category: 'games' },
+            { name: 'CrazyGames', url: 'https://www.crazygames.com', icon: '🎲', category: 'games' },
+            { name: 'Poki', url: 'https://poki.com', icon: '🕹️', category: 'games' },
+            { name: 'HoodaMath', url: 'https://www.hoodamath.com', icon: '🧮', category: 'games' },
+            { name: 'Coolmath', url: 'https://www.coolmathgames.com', icon: '❄️', category: 'games' },
+            { name: 'Friv', url: 'https://www.friv.com', icon: '🎪', category: 'games' },
+            
+            // ビデオ
             { name: 'YouTube', url: 'https://www.youtube.com', icon: '▶️', category: 'video' },
-            { name: 'Netflix', url: 'https://www.netflix.com', icon: '🎬', category: 'video' },
-            { name: 'Spotify', url: 'https://open.spotify.com', icon: '🎵', category: 'music' },
             { name: 'Twitch', url: 'https://www.twitch.tv', icon: '🔴', category: 'video' },
+            
+            // ソーシャル
             { name: 'Discord', url: 'https://discord.com', icon: '💬', category: 'social' },
             { name: 'Reddit', url: 'https://www.reddit.com', icon: '📱', category: 'social' },
-            { name: 'Twitter', url: 'https://twitter.com', icon: '🐦', category: 'social' },
-            { name: 'Instagram', url: 'https://www.instagram.com', icon: '📸', category: 'social' },
-            { name: 'TikTok', url: 'https://www.tiktok.com', icon: '🎵', category: 'social' },
-            { name: 'Facebook', url: 'https://www.facebook.com', icon: '👥', category: 'social' },
-            { name: 'Google', url: 'https://www.google.com', icon: '🔍', category: 'other' },
-            { name: 'Roblox', url: 'https://www.roblox.com', icon: '🎮', category: 'games' },
-            { name: 'Coolmath', url: 'https://www.coolmathgames.com', icon: '🧮', category: 'games' },
-            { name: 'SoundCloud', url: 'https://soundcloud.com', icon: '☁️', category: 'music' },
-            { name: 'Amazon Video', url: 'https://www.amazon.com/Amazon-Video', icon: '🎥', category: 'video' },
-            { name: 'Disney+', url: 'https://www.disneyplus.com', icon: '🏰', category: 'video' },
-            { name: 'GitHub', url: 'https://github.com', icon: '🐙', category: 'other' },
-            { name: 'Wikipedia', url: 'https://wikipedia.org', icon: '📚', category: 'other' }
+            
+            // その他
+            { name: 'Google', url: 'https://www.google.com', icon: '🔍', category: 'all' }
         ];
         
         // 初期化
         function init() {
-            updateSiteGrid();
-            loadUrl('https://www.google.com');
-            setupEvents();
+            updateSites();
+            load('https://www.google.com');
+            
+            // URL入力でEnterキー対応
+            urlInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') go();
+            });
+            
+            // ゲームモードのマウス追従
+            document.addEventListener('mousemove', (e) => {
+                if (gameMode) {
+                    gameCursor.style.left = e.pageX - 10 + 'px';
+                    gameCursor.style.top = e.pageY - 10 + 'px';
+                }
+            });
         }
         
-        // サイトグリッド更新
-        function updateSiteGrid() {
+        // サイト表示更新
+        function updateSites() {
             sitesGrid.innerHTML = '';
             
-            const filteredSites = activeCategory === 'all' 
+            const filtered = category === 'all' 
                 ? sites 
-                : sites.filter(site => site.category === activeCategory);
+                : sites.filter(s => s.category === category);
             
-            filteredSites.forEach(site => {
+            filtered.forEach(site => {
                 const btn = document.createElement('button');
                 btn.className = 'site-btn';
                 btn.innerHTML = `
@@ -464,28 +367,29 @@
                     <div>${site.name}</div>
                 `;
                 btn.onclick = () => {
-                    searchInput.value = site.url;
-                    navigateTo(site.url);
+                    urlInput.value = site.url;
+                    load(site.url);
                 };
                 sitesGrid.appendChild(btn);
             });
-            
-            siteCount.textContent = filteredSites.length;
         }
         
         // カテゴリ設定
-        function setCategory(category) {
-            activeCategory = category;
+        function setCategory(cat) {
+            category = cat;
+            
+            // ボタン状態更新
             document.querySelectorAll('.category-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
-            updateSiteGrid();
+            
+            updateSites();
         }
         
         // ナビゲーション
-        function navigate() {
-            const input = searchInput.value.trim();
+        function go() {
+            const input = urlInput.value.trim();
             if (!input) return;
             
             let url;
@@ -495,92 +399,79 @@
                 url = `https://www.google.com/search?q=${encodeURIComponent(input)}`;
             }
             
-            navigateTo(url);
+            load(url);
         }
         
-        function navigateTo(url) {
+        function load(url) {
             // 履歴更新
             history = history.slice(0, currentIndex + 1);
             history.push(url);
             currentIndex = history.length - 1;
             
             // 読み込み
-            browserFrame.src = url;
-            urlDisplay.textContent = `Loading: ${url.substring(0, 40)}...`;
-            statusText.textContent = 'Connecting...';
+            browser.src = url;
             
-            // 読み込み完了
-            browserFrame.onload = () => {
-                urlDisplay.textContent = url;
-                statusText.textContent = 'Connected';
-                
-                // 監視スクリプト無効化
-                try {
-                    const iframeDoc = browserFrame.contentDocument;
-                    const scripts = iframeDoc.querySelectorAll('script');
-                    scripts.forEach(script => {
-                        if (script.src && (
-                            script.src.includes('securly') || 
-                            script.src.includes('content') || 
-                            script.src.includes('blocked'))) {
-                            script.remove();
-                        }
-                    });
-                } catch(e) {
-                    // クロスオリジン制限
-                }
-            };
+            // ゲームサイトかチェック
+            const gameSites = ['krunker.io', 'crazygames.com', 'poki.com'];
+            const isGameSite = gameSites.some(site => url.includes(site));
             
-            browserFrame.onerror = () => {
-                statusText.textContent = 'Connection failed';
-            };
-        }
-        
-        // ブラウザコントロール
-        function goBack() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                browserFrame.src = history[currentIndex];
+            if (isGameSite && !gameMode) {
+                showNotify('Game detected. Enable Game Mode for better experience.');
             }
         }
         
-        function goForward() {
+        // ブラウザコントロール
+        function back() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                browser.src = history[currentIndex];
+            }
+        }
+        
+        function forward() {
             if (currentIndex < history.length - 1) {
                 currentIndex++;
-                browserFrame.src = history[currentIndex];
+                browser.src = history[currentIndex];
             }
         }
         
         function refresh() {
-            browserFrame.src = browserFrame.src;
+            browser.src = browser.src;
         }
         
-        function openNew() {
-            window.open(browserFrame.src, '_blank');
+        // ゲームモード切り替え
+        function toggleGameMode() {
+            gameMode = !gameMode;
+            document.body.classList.toggle('game-mode', gameMode);
+            gameToggle.textContent = `GAME MODE: ${gameMode ? 'ON' : 'OFF'}`;
+            gameToggle.classList.toggle('active', gameMode);
+            
+            if (gameMode) {
+                showNotify('Game Mode ON - Mouse cursor hidden');
+                // iframe内にもカーソルを非表示にする試み
+                try {
+                    const iframeDoc = browser.contentDocument;
+                    const style = document.createElement('style');
+                    style.textContent = '* { cursor: none !important; }';
+                    iframeDoc.head.appendChild(style);
+                } catch(e) {
+                    // クロスオリジン制限
+                }
+            } else {
+                showNotify('Game Mode OFF');
+            }
         }
         
-        function copyUrl() {
-            navigator.clipboard.writeText(browserFrame.src);
-            showNotification('URL copied');
-        }
-        
-        // 通知
-        function showNotification(message) {
-            notification.textContent = message;
-            notification.classList.add('show');
+        // 通知表示
+        function showNotify(msg) {
+            notify.textContent = msg;
+            notify.style.display = 'block';
             setTimeout(() => {
-                notification.classList.remove('show');
+                notify.style.display = 'none';
             }, 2000);
         }
         
-        // イベント設定
-        function setupEvents() {
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') navigate();
-            });
-        }
-        
-        // ページ読み込み
+        // ページ読み込み時に実行
         window.onload = init;
     </script>
 </body>
